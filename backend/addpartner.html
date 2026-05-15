@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Partners</title>
+    <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<div class="maincontainer">
+    <div class="innercontainer">
+        <img src="images/admin.jpg" alt="image not found"/>
+        <input type="button" value="Logout" class="logout-btn"
+               onclick="window.location.href='/logout'" />
+    </div>
+</div>
+
+<div class="maincontainer1">
+    <div class="innercontainer1">
+        <p>Wednesday, 12th Feb 2025</p>
+    </div>
+</div>
+
+<div class="maincontainer2">
+    <div class="innercontainer2">
+
+        <!-- LEFT MENU -->
+        <div class="page-manager-left">
+            <ul>
+                <li><a href="/pagesummary">Page Summary</a></li>
+                    <li><a href="/addpage">Add Page</a></li>
+                    <li><a href="/categorysummary">Category Summary</a></li>
+                    <li><a href="/addcategory">Add Category</a></li>
+                    <li><a href="/productsummary">Product Summary</a></li>
+                    <li><a href="/addproduct">Add Product</a></li>
+                    <li><a href="/slidersummary">Slider Summary</a></li>
+                    <li><a href="/addslider">Add Slider</a></li>
+                    <li><a href="/brandsummary">Brand Summary</a></li>
+                    <li><a href="/addbrand">Add Brand</a></li>
+                    <li><a href="/partnersummary">Partner Summary</a></li>
+                    <li><a href="/addpartner">Add Partner</a></li>
+                    <li><a href="/changepassword">Change Password</a></li>
+                <li>
+                    <h1>Login Information</h1>
+                    <p>Username : admin</p>
+                    <p>Email : example@domain.com</p>
+                </li>
+            </ul>
+        </div>
+
+        <!-- RIGHT CONTENT -->
+        <div class="page-manager-right">
+            <h1>Partner Manager</h1>
+
+            <div class="add-page">
+                <h2 id="formTitle">Add Partner</h2>
+
+                <div class="add-page-table">
+                    <form id="addPartnerForm" enctype="multipart/form-data">
+
+                        <!-- ID for Edit -->
+                        <input type="hidden" id="edit-id" name="id" />
+
+                        <table>
+                            <tr>
+                                    <td><label for="name">Name</label></td>
+                                    <td><input type="text" id="name" name="name" required /></td>
+                                </tr>
+                            <tr>
+                                <td>image</td>
+                                <td>
+                                    <input type="file"
+                                           name="image"
+                                           id="image"
+                                           accept="image/*" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="name">Link</label></td>
+                                <td><input type="text" id="link" name="link" required /></td>
+                            </tr>
+
+                            <tr>
+                                <td>Display Order</td>
+                                <td>
+                                    <input type="number"
+                                           name="displayorder"
+                                           id="displayorder"
+                                           min="1"
+                                           required />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Status</td>
+                                <td>
+                                    <input type="checkbox" name="status" id="check" />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <input type="submit" value="Save"
+                                           class="login-btn save-btn" />
+                                    <input type="reset" value="Cancel"
+                                           class="login-btn"
+                                           onclick="resetForm()" />
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+
+                    <div id="responseMsg" style="margin-top:10px;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="maincontainer3">
+    <div class="innercontainer3"></div>
+</div>
+
+<script>
+/* ---------------- RESET FORM ---------------- */
+function resetForm() {
+    document.getElementById('addPartnerForm').reset();
+    document.getElementById('edit-id').value = '';
+    document.getElementById('formTitle').textContent = 'Add Partner';
+    document.getElementById('responseMsg').textContent = '';
+}
+
+/* ---------------- PREFILL FOR EDIT ---------------- */
+window.addEventListener('DOMContentLoaded', () => {
+
+    if (!window.location.pathname.includes('addpartner')) return;
+
+    const partnerData = localStorage.getItem('editPartner');
+    if (!partnerData) return;
+
+    const partner = JSON.parse(partnerData);
+
+    document.getElementById('edit-id').value = partner.id;
+    document.getElementById('name').value = partner.name;
+    document.getElementById('link').value = partner.link;
+    document.getElementById('displayorder').value = partner.displayorder;
+    document.getElementById('check').checked = partner.status === 1;
+
+    document.getElementById('formTitle').textContent = 'Edit Partner';
+
+    localStorage.removeItem('editPartner');
+});
+
+/* ---------------- SUBMIT FORM ---------------- */ 
+document.getElementById('addPartnerForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const id = document.getElementById('edit-id').value;
+    const name = this.name.value.trim();
+    const link = this.link.value.trim();
+    const image = this.image.files[0];
+    const displayorder = this.displayorder.value.trim();
+    const status = this.check.checked ? 1 : 0;
+
+    if ( !name || !link || !displayorder) {
+        alert('⚠️ Please fill all required fields.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('link', link);
+    if (image) formData.append('image', image);
+    formData.append('displayorder', displayorder);
+    formData.append('status', status);
+
+    const isEdit = !!id;
+    const url = isEdit ? `/update-partner/${id}` : '/add-partner';
+    // const method = isEdit ? 'PUT' : 'POST';
+    const method = 'POST';
+    
+
+    try {
+        const response = await fetch(url, { method, body: formData });
+        const result = await response.json();
+
+        const msg = document.getElementById('responseMsg');
+        if (response.ok) {
+            msg.style.color = 'green';
+            msg.textContent = result.message || '✅ Saved successfully!';
+            setTimeout(() => {
+                window.location.href = '/partnersummary';
+            }, 1000);
+        } else {
+            msg.style.color = 'red';
+            msg.textContent = result.message || '❌ Failed to save.';
+        }
+    } catch (err) {
+        console.error(err);
+    }
+});
+</script>
+
+</body>
+</html>

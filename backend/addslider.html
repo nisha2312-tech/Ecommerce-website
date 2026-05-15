@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Slider</title>
+    <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<div class="maincontainer">
+    <div class="innercontainer">
+        <img src="images/admin.jpg" alt="image not found"/>
+        <input type="button" value="Logout" class="logout-btn"
+               onclick="window.location.href='/logout'" />
+    </div>
+</div>
+
+<div class="maincontainer1">
+    <div class="innercontainer1">
+        <p>Wednesday, 12th Feb 2025</p>
+    </div>
+</div>
+
+<div class="maincontainer2">
+    <div class="innercontainer2">
+
+        <!-- LEFT MENU -->
+        <div class="page-manager-left">
+            <ul>
+                <li><a href="/pagesummary">Page Summary</a></li>
+                    <li><a href="/addpage">Add Page</a></li>
+                    <li><a href="/categorysummary">Category Summary</a></li>
+                    <li><a href="/addcategory">Add Category</a></li>
+                    <li><a href="/productsummary">Product Summary</a></li>
+                    <li><a href="/addproduct">Add Product</a></li>
+                    <li><a href="/slidersummary">Slider Summary</a></li>
+                    <li><a href="/addslider">Add Slider</a></li>
+                    <li><a href="/brandsummary">Brand Summary</a></li>
+                    <li><a href="/addbrand">Add Brand</a></li>
+                    <li><a href="/partnersummary">Partner Summary</a></li>
+                    <li><a href="/addpartner">Add Partner</a></li>
+                    <li><a href="/changepassword">Change Password</a></li>
+                <li>
+                    <h1>Login Information</h1>
+                    <p>Username : admin</p>
+                    <p>Email : example@domain.com</p>
+                </li>
+            </ul>
+        </div>
+
+        <!-- RIGHT CONTENT -->
+        <div class="page-manager-right">
+            <h1>Slider Manager</h1>
+
+            <div class="add-page">
+                <h2 id="formTitle">Add Slider</h2>
+
+                <div class="add-page-table">
+                    <form id="addSliderForm" enctype="multipart/form-data">
+
+                        <!-- ID for Edit -->
+                        <input type="hidden" id="edit-id" name="id" />
+
+                        <table>
+                            <tr>
+                                <td>Description</td>
+                                <td>
+                                    <textarea cols="50" rows="10"
+                                              name="description"
+                                              id="description"
+                                              required></textarea>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Image</td>
+                                <td>
+                                    <input type="file"
+                                           name="image"
+                                           id="image"
+                                           accept="image/*" />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Display Order</td>
+                                <td>
+                                    <input type="number"
+                                           name="displayorder"
+                                           id="displayorder"
+                                           min="1"
+                                           required />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Status</td>
+                                <td>
+                                    <input type="checkbox" name="check" id="check" />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <input type="submit" value="Save"
+                                           class="login-btn save-btn" />
+                                    <input type="reset" value="Cancel"
+                                           class="login-btn"
+                                           onclick="resetForm()" />
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+
+                    <div id="responseMsg" style="margin-top:10px;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="maincontainer3">
+    <div class="innercontainer3"></div>
+</div>
+
+<script>
+/* ---------------- RESET FORM ---------------- */
+function resetForm() {
+    document.getElementById('addSliderForm').reset();
+    document.getElementById('edit-id').value = '';
+    document.getElementById('formTitle').textContent = 'Add Slider';
+    document.getElementById('responseMsg').textContent = '';
+}
+
+/* ---------------- PREFILL FOR EDIT ---------------- */
+window.addEventListener('DOMContentLoaded', () => {
+
+    if (!window.location.pathname.includes('addslider')) return;
+
+    const sliderData = localStorage.getItem('editSlider');
+    if (!sliderData) return;
+
+    const slider = JSON.parse(sliderData);
+
+    document.getElementById('edit-id').value = slider.id;
+    document.getElementById('description').value = slider.description;
+    document.getElementById('displayorder').value = slider.displayorder;
+    document.getElementById('check').checked = slider.status === 1;
+
+    document.getElementById('formTitle').textContent = 'Edit Slider';
+
+    localStorage.removeItem('editSlider');
+});
+
+/* ---------------- SUBMIT FORM ---------------- */
+document.getElementById('addSliderForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const id = document.getElementById('edit-id').value;
+    const description = this.description.value.trim();
+    const image = this.image.files[0];
+    const displayorder = this.displayorder.value.trim();
+    const status = this.check.checked ? 1 : 0;
+
+    if (!description || !displayorder) {
+        alert('⚠️ Please fill all required fields.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('description', description);
+    if (image) formData.append('image', image);
+    formData.append('displayorder', displayorder);
+    formData.append('status', status);
+
+    const isEdit = !!id;
+    const url = isEdit ? `/update-slider/${id}` : '/add-slider';
+    const method = isEdit ? 'PUT' : 'POST';
+    
+
+    try {
+        const response = await fetch(url, { method, body: formData });
+        const result = await response.json();
+
+        const msg = document.getElementById('responseMsg');
+        if (response.ok) {
+            msg.style.color = 'green';
+            msg.textContent = result.message || '✅ Saved successfully!';
+            setTimeout(() => {
+                window.location.href = '/slidersummary';
+            }, 1000);
+        } else {
+            msg.style.color = 'red';
+            msg.textContent = result.message || '❌ Failed to save.';
+        }
+    } catch (err) {
+        console.error(err);
+    }
+});
+</script>
+
+</body>
+</html>

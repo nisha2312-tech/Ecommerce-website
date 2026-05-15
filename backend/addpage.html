@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Page</title>
+    <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="maincontainer">
+        <div class="innercontainer">
+            <img src="images/admin.jpg" alt="Admin Profile" />
+            <input type="button" value="Logout" class="logout-btn" onclick="window.location.href='/logout'" />
+        </div>
+    </div>
+
+    <!-- Date Display -->
+    <div class="maincontainer1">
+        <div class="innercontainer1">
+            <p>Wednesday, 12th Feb 2025</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="maincontainer2">
+        <div class="innercontainer2">
+
+            <!-- Sidebar -->
+            <div class="page-manager-left">
+                <ul>
+                    <li><a href="/pagesummary">Page Summary</a></li>
+                    <li><a href="/addpage">Add Page</a></li>
+                    <li><a href="/categorysummary">Category Summary</a></li>
+                    <li><a href="/addcategory">Add Category</a></li>
+                    <li><a href="/productsummary">Product Summary</a></li>
+                    <li><a href="/addproduct">Add Product</a></li>
+                    <li><a href="/slidersummary">Slider Summary</a></li>
+                    <li><a href="/addslider">Add Slider</a></li>
+                    <li><a href="/brandsummary">Brand Summary</a></li>
+                    <li><a href="/addbrand">Add Brand</a></li>
+                    <li><a href="/partnersummary">Partner Summary</a></li>
+                    <li><a href="/addpartner">Add Partner</a></li>
+                    <li><a href="/changepassword">Change Password</a></li>
+                    <li>
+                        <h1>Login Information</h1>
+                        <p>Username: admin</p>
+                        <p>Email: example@domain.com</p>
+                    </li>
+                </ul>
+            </div>
+            <!-- Page Form -->
+            <div class="page-manager-right">
+                <h1>Page Manager</h1>
+                <div class="add-page">
+                    <h2 id="formTitle">Add Page</h2>
+                    <div class="add-page-table">
+                        <form id="addPageForm" method="post">
+                            <input type="hidden" id="edit-id" name="id" />
+                            <table>
+                                <tr>
+                                    <td><label for="name">Name</label></td>
+                                    <td><input type="text" id="name" name="name" required /></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="title">Title</label></td>
+                                    <td><input type="text" id="title" name="title" required /></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="content">Content</label></td>
+                                    <td>
+                                        <textarea id="content" name="content" cols="50" rows="10" class="content" required></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label for="displayorder">Display Order</label></td>
+                                    <td><input type="number" id="displayorder" name="displayorder" class="display-order" required min="1" /></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="status">Status</label></td>
+                                    <td><input type="checkbox" id="status" name="status" /></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input type="submit" value="Save" class="login-btn save-btn" />
+                                        <input type="reset" value="Cancel" class="login-btn" onclick="resetForm()" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                        <div id="responseMsg" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="maincontainer3">
+        <div class="innercontainer3"></div>
+    </div>
+
+    <!-- JS Logic -->
+    <script>
+        // Load edit data if available
+        window.onload = () => {
+            const editData = localStorage.getItem('editPage');
+            if (editData) {
+                const page = JSON.parse(editData);
+                document.getElementById('edit-id').value = page.id || '';
+                document.getElementById('name').value = page.name || '';
+                document.getElementById('title').value = page.title || '';
+                document.getElementById('content').value = page.content || '';
+                document.getElementById('displayorder').value = page.displayorder || '';
+                document.getElementById('status').checked = page.status === 1 || page.status === true;
+                document.getElementById('formTitle').textContent = 'Edit Page';
+                localStorage.removeItem('editPage');
+            }
+        };
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('edit-id').value = '';
+            document.getElementById('formTitle').textContent = 'Add Page';
+            document.getElementById('responseMsg').textContent = '';
+            document.getElementById('status').checked = false;
+        }
+
+        // Submit form
+        document.getElementById('addPageForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const title = document.getElementById('title').value.trim();
+            const content = document.getElementById('content').value.trim();
+            const displayorder = parseInt(document.getElementById('displayorder').value, 10);
+            const status = document.getElementById('status').checked ? 1 : 0;
+
+            if (!name || !title || !content || isNaN(displayorder) || displayorder < 1) {
+                alert('Please fill all fields correctly.');
+                return;
+            }
+            const payload = { id, name, title, content, displayorder, status };
+            const url = id ? `/update-page/${id}` : '/add-page';
+            const method = id ? 'PUT' : 'POST';
+            try {
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await res.json();
+                // console.log(result);
+                const responseMsg = document.getElementById('responseMsg');
+                if (res.ok) {
+                    responseMsg.style.color = 'green';
+                    responseMsg.textContent = result.message || 'Saved successfully!';
+                    document.getElementById('addPageForm').reset();
+                    resetForm();
+                } else {
+                    responseMsg.style.color = 'red';
+                    responseMsg.textContent = result.message || 'Error saving page.';
+                }
+
+            } 
+            catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        });
+    </script>
+
+</body>
+</html>

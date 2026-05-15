@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Product</title>
+    <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+    <div class="maincontainer">
+        <div class="innercontainer">
+            <img src="images/admin.jpg" alt="image not found"/>
+            <input type="button" name="logout" value="Logout" class="logout-btn" onclick="window.location.href='/logout'" />
+        </div>
+    </div>
+    <div class="maincontainer1">
+        <div class="innercontainer1">
+            <p>Wednesday, 12th Feb 2025</p>
+        </div>
+    </div>
+    <div class="maincontainer2">
+        <div class="innercontainer2">
+            <div class="page-manager-left">
+                <ul>
+                    <li><a href="/pagesummary">Page Summary</a></li>
+                    <li><a href="/addpage">Add Page</a></li>
+                    <li><a href="/categorysummary">Category Summary</a></li>
+                    <li><a href="/addcategory">Add Category</a></li>
+                    <li><a href="/productsummary">Product Summary</a></li>
+                    <li><a href="/addproduct">Add Product</a></li>
+                    <li><a href="/slidersummary">Slider Summary</a></li>
+                    <li><a href="/addslider">Add Slider</a></li>
+                    <li><a href="/brandsummary">Brand Summary</a></li>
+                    <li><a href="/addbrand">Add Brand</a></li>
+                    <li><a href="/partnersummary">Partner Summary</a></li>
+                    <li><a href="/addpartner">Add Partner</a></li>
+                    <li><a href="/changepassword">Change Password</a></li>
+                    <li>
+                        <h1>Login Information</h1>
+                        <p>Username : admin</p>
+                        <p>Email : example@domain.com</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="page-manager-right">
+                <h1>Product Manager</h1>
+                <div class="add-page">
+                    <h2 id="formTitle">Add Product</h2>
+                    <div class="add-page-table">
+                        <form id="addProductForm" method="post" enctype="multipart/form-data">
+                            <input type="hidden" id="edit-id" name="id" />
+                            <table>
+                                <tr>
+                                    <td>Category Id</td>
+                                    <td>
+                                        <select name="category_id" id="category_id" required>
+                                            <option value="">Loading categories...</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Brand Id</td>
+                                    <td>
+                                        <select name="brand_id" id="brand_id" required>
+                                            <option value="">Loading brands...</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Product Name</td>
+                                    <td><input type="text" name="productname" id="productname" required /></td>
+                                </tr>
+                                <tr>
+                                    <td>Description</td>
+                                    <td><textarea cols="50" rows="10" name="description" id="description" required></textarea></td>									
+                                </tr>
+                                <tr>
+                                    <td>Image</td>
+                                    <td><input type="file" name="image" id="image" accept="image/*" required /></td>
+                                </tr>
+								<tr>
+                                    <td>Price</td>
+                                    <td><input type="number" name="price" id="price" min="0" step="0.01" required /></td>
+                                </tr>
+                                <tr>
+                                    <td>Display Order</td>
+                                    <td><input type="number" name="displayorder" id="displayorder" min="1" required /></td>
+                                </tr>
+                                <tr>
+                                    <td>Status</td>
+                                    <td><input type="checkbox" name="check" id="check" /></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input type="submit" value="Save" class="login-btn save-btn" />
+                                        <input type="reset" value="Cancel" class="login-btn" onclick="resetForm()" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                        <div id="responseMsg" style="margin-top: 10px; color: green;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="maincontainer3">
+        <div class="innercontainer3"></div>
+    </div>
+
+    <script>
+    // Load category       
+    async function loadCategories(selectedId = null) {
+        try {
+            const res = await fetch('/api/category');
+            const categories = await res.json();
+
+            const select = document.getElementById('category_id');
+            select.innerHTML = '<option value="">Select Category</option>';
+
+            categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.id;
+                option.textContent = cat.name;
+
+                if (selectedId && Number(selectedId) === Number(cat.id)) {
+                    option.selected = true;
+                }
+
+                select.appendChild(option);
+            });
+        } catch (err) {
+            console.error('Failed to load categories', err);
+        }
+    }
+    // Load brands
+        async function loadBrands(selectedId = null) {
+        try {
+            const res = await fetch('/api/brand');
+            const brands = await res.json();
+
+            const select = document.getElementById('brand_id');
+            select.innerHTML = '<option value="">Select Brand</option>';
+
+            brands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand.id;
+                option.textContent = brand.name;
+
+                if (selectedId && Number(selectedId) === Number(brand.id)) {
+                    option.selected = true;
+                }
+
+                select.appendChild(option);
+            });
+        } catch (err) {
+            console.error('Failed to load brands', err);
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('addProductForm').reset();
+        document.getElementById('edit-id').value = '';
+        document.getElementById('formTitle').textContent = 'Add Product';
+        document.getElementById('responseMsg').textContent = '';
+    }
+
+    // DOM Content Loaded
+    window.addEventListener('DOMContentLoaded', async () => {
+
+    const productData = localStorage.getItem('editProduct');
+
+    if (productData) {
+        const product = JSON.parse(productData);
+
+        document.getElementById('edit-id').value = product.id;
+        document.getElementById('productname').value = product.productname;
+        document.getElementById('description').value = product.description;
+        document.getElementById('price').value = product.price;
+        document.getElementById('displayorder').value = product.displayorder;
+        document.getElementById('check').checked = product.status === 1;
+        document.getElementById('formTitle').textContent = 'Update Product';
+
+        await loadCategories(product.category_id); // 🔥 synced
+        await loadBrands(product.brand_id);
+        localStorage.removeItem('editProduct');
+    } else {
+        await loadCategories();
+        await loadBrands();
+    }
+});
+
+document.getElementById('addProductForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const id = document.getElementById('edit-id').value;
+
+    const category_id = form.category_id.value;
+    const brand_id = form.brand_id.value;
+
+    const productname = form.productname.value.trim();
+    const description = form.description.value.trim();
+    const image = form.image.files[0];
+    const price = form.price.value;
+    const displayorder = form.displayorder.value;
+    const check = form.check.checked;
+
+    if (!category_id || !brand_id || !productname || !description || !price || !displayorder) {
+        alert('⚠️ Please fill all required fields');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('category_id', category_id);
+    formData.append('brand_id', brand_id);
+    formData.append('productname', productname);
+    formData.append('description', description);
+    if (image) formData.append('image', image); // ✅ FIXED
+    formData.append('price', price);
+    formData.append('displayorder', displayorder);
+    formData.append('check', check ? 1 : 0);
+
+    const url = id ? `/update-product/${id}` : '/add-product';
+    const method = id ? 'PUT' : 'POST';
+
+    try {
+        const response = await fetch(url, { method, body: formData });
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message || 'Success');
+            window.location.href = '/productsummary';
+        } else {
+            alert(result.message || 'Failed');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Server error');
+    }
+});
+</script>
+</body>
+</html>

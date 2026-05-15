@@ -1,0 +1,397 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { initHomeScripts } from "./main";
+import "./style.css";
+
+const Paymentpolicy = () => {
+    useEffect(() => {
+          initHomeScripts();
+        }, []);
+    
+      // Auth
+      const token = localStorage.getItem("token");
+      const username = localStorage.getItem("username");
+      const isLoggedIn = !!token;
+      // --------------------
+      // USER-SPECIFIC KEY
+      // --------------------
+      const wishlistKey = username ? `wishlist_${username}` : null;
+      // USER-SPECIFIC CART KEY
+      const cartKey = username ? `cart_${username}` : null;
+    
+      // States
+      const [products, setProducts] = useState([]);
+      const [categories, setCategories] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+      const [searchTerm, setSearchTerm] = useState("");
+      const [currentPage, setCurrentPage] = useState(1);
+      const [wishlist, setWishlist] = useState([]);
+      // Cart state (for count)
+      const [cart, setCart] = useState([]); 
+    
+      const ITEMS_PER_PAGE = 8;
+    
+      // Init scripts and load wishlist once
+      useEffect(() => {
+        initHomeScripts();
+        if(!wishlistKey){
+          setWishlist([]);
+        }
+        else{
+          setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
+        }
+          if (cartKey) {
+        setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
+        }
+      }, [wishlistKey, cartKey]);
+    
+      //   const storedWishlist = JSON.parse(localStorage.getItem(wishlistKey)) || [];
+      //   setWishlist(storedWishlist);
+      // }, [wishlistKey]);
+    
+      // Fetch products
+      useEffect(() => {
+        axios
+          .get("http://localhost:5000/api/products")
+          .then((res) => setProducts(res.data))
+          .catch((err) => setError(err.message))
+          .finally(() => setLoading(false));
+      }, []);
+    
+      // Fetch categories
+      useEffect(() => {
+        axios
+          .get("http://localhost:5000/api/category")
+          .then((res) => setCategories(res.data))
+          .catch((err) => console.error("Error fetching categories:", err));
+      }, []);
+    
+      if (loading) return <div className="text-center my-5">Loading products...</div>;
+      if (error) return <div className="text-center text-danger my-5">{error}</div>;
+    
+      // Filtered products
+      const filteredProducts = products.filter(
+        (product) =>
+          product.productname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    
+      // Pagination
+      const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const endIndex = startIndex + ITEMS_PER_PAGE;
+      const currentProducts = filteredProducts.slice(startIndex, endIndex);
+    
+      
+    
+      const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        window.location.href = "/login";
+      };
+    
+      // Add/remove product from wishlist
+      const toggleWishlist = (product) => {
+        if(!wishlistKey) return;
+        let newWishlist;
+        if (wishlist.some((p) => p.id === product.id)) {
+          // Remove if already in wishlist
+          newWishlist = wishlist.filter((p) => p.id !== product.id);
+        } else {
+          // Add if not in wishlist
+          newWishlist = [...wishlist, product];
+        }
+        setWishlist(newWishlist);
+        localStorage.setItem(wishlistKey, JSON.stringify(newWishlist));
+      };
+    
+      // Check if product is in wishlist
+      const isInWishlist = (productId) => {
+        return wishlist.some((p) => p.id === productId);
+      };
+        // Add to Cart function
+        const addToCart = (product) => {
+        if (!cartKey) return;
+    
+        let newCart = [...cart];
+        const existingIndex = newCart.findIndex((p) => p.id === product.id);
+    
+        if (existingIndex !== -1) {
+          newCart[existingIndex].quantity += 1;
+        } else {
+          newCart.push({
+            ...product,
+            quantity: 1,
+          });
+        }
+    
+        setCart(newCart);
+        localStorage.setItem(cartKey, JSON.stringify(newCart));
+      };
+      return (
+      <div>
+        {/* Top Bar */}
+              <div className="top-bar">
+                <div className="container-fluid">
+                  <div className="row">
+                    <div className="col-sm-6">
+                      <i className="fa fa-envelope"></i> support@email.com
+                    </div>
+                    <div className="col-sm-6">
+                      <i className="fa fa-phone-alt"></i> +012-345-6789
+                    </div>
+                  </div>
+                </div>
+              </div>
+        
+              {/* Nav Bar */}
+              <div className="nav">
+                <div className="container-fluid">
+                  <nav className="navbar navbar-expand-md bg-dark navbar-dark">
+                    <a href="#" className="navbar-brand">
+                      MENU
+                    </a>
+                    <button
+                      type="button"
+                      className="navbar-toggler"
+                      data-toggle="collapse"
+                      data-target="#navbarCollapse"
+                    >
+                      <span className="navbar-toggler-icon"></span>
+                    </button>
+        
+                    <div className="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                      <div className="navbar-nav mr-auto">
+                        <Link to="/" className="nav-item nav-link active">Home</Link>
+                        <Link to="/Products" className="nav-item nav-link">Shop</Link>
+                        <Link to="/Aboutus" className="nav-item nav-link">Aboutus</Link>
+                        <Link to="/Myaccount" className="nav-item nav-link">My Account</Link>
+                        <Link to="/Contactus" className="nav-item nav-link">Contact us</Link>
+                      
+                      
+                    </div>
+        
+                        {/* ===================== USER DROPDOWN ===================== */}
+                        
+                        <div className="navbar-nav ms-auto">
+                          <div className="nav-item dropdown">
+                          <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            {/* User Account */}
+                            {isLoggedIn ? username : "User Account"}
+                          </a>
+                          <div className="dropdown-menu dropdown-menu-end">
+                            {!isLoggedIn ? (
+                            <Link to="/login" className="dropdown-item">Login & Register</Link>
+                            ) : (
+                            <button
+                              className="dropdown-item"
+                              onClick={handleLogout}
+                            >
+                              Logout
+                            </button>
+                            )}
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </nav>
+                </div>
+              </div>
+        
+              {/* Bottom Bar */}
+              <div className="bottom-bar">
+                <div className="container-fluid">
+                  <div className="row align-items-center">
+                    <div className="col-md-3">
+                      <div className="logo">
+                        <a href="index.html">
+                          <img src="images/logo.png" alt="Logo" />
+                        </a>
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="search">
+                        <input type="text" placeholder="Search" value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value);setCurrentPage(1);}} />
+                        <button>
+                          <i className="fa fa-search"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="user">
+                        <Link to ="/Wishlist" className="btn wishlist">
+                          <i className="fa fa-heart"></i>
+                          <span>{wishlist.length}</span>
+                        </Link>
+                        {/* <a href="cart.html" className="btn cart">
+                          <i className="fa fa-shopping-cart"></i>
+                          <span>(0)</span>
+                        </a> */}
+                        <Link to="/Cart" className="btn cart">
+                          <i className="fa fa-shopping-cart"></i>
+                          <span>({cart.reduce((sum, item) => sum + item.quantity, 0)})</span>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+        {/* Breadcrumb Start */}
+        <div className="breadcrumb-wrap">
+          <div className="container-fluid">
+            <ul className="breadcrumb">
+              <li className="breadcrumb-item"><a href="#">Home</a></li>
+              <li className="breadcrumb-item active">Payment policy</li>
+            </ul>
+          </div>
+        </div>
+        {/* Breadcrumb End */}
+            <div className="about">
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-lg-12">
+                            
+                        </div>
+                        {/* <div className="col-lg-3 about-left">
+                            
+
+                            <img src="images/slider-1.jpg"/>
+                        </div> */}
+                        <div className="col-lg-12">
+                            <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, </p>
+                        </div>
+                        <div className="col-lg-12">
+                            <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, </p>
+                            <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, </p>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        
+
+
+         {/* Footer */}
+      <div className="footer">
+        <div className="container-fluid">
+          <div className="row">
+            {/* Contact */}
+            <div className="col-lg-3 col-md-6">
+              <div className="footer-widget">
+                <h2>Get in Touch</h2>
+                <div className="contact-info">
+                  <p>
+                    <i className="fa fa-map-marker"></i> 123 E Store, Los Angeles, USA
+                  </p>
+                  <p>
+                    <i className="fa fa-envelope"></i> email@example.com
+                  </p>
+                  <p>
+                    <i className="fa fa-phone"></i> +123-456-7890
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Social */}
+            <div className="col-lg-3 col-md-6">
+              <div className="footer-widget">
+                <h2>Follow Us</h2>
+                <div className="contact-info">
+                  <div className="social">
+                    {["twitter", "facebook-f", "linkedin-in", "instagram", "youtube"].map(
+                      (platform, i) => (
+                        <a href="#" key={i}>
+                          <i className={`fab fa-${platform}`}></i>
+                        </a>
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Company Info */}
+            <div className="col-lg-3 col-md-6">
+              <div className="footer-widget">
+                <h2>Company Info</h2>
+                <ul>
+                  <li>
+                    <Link to="/Aboutus" >About Us</Link>
+                 
+                  </li>
+                  <li>
+                    <Link to="/Privacypolicy">Privacy Policy</Link>
+                  </li>
+                  <li>
+                    <Link to="/Terms">Terms & Condition</Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Purchase Info */}
+            <div className="col-lg-3 col-md-6">
+              <div className="footer-widget">
+                <h2>Purchase Info</h2>
+                <ul>
+                  <li>
+                    <Link to="/Paymentpolicy">Payment Policy</Link>
+                  </li>
+                  <li>
+                    <Link to="/Shippingpolicy">Shippingpolicy</Link>
+                  </li>
+                  <li>
+                    <Link to="/Returnpolicy">Return Policy</Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="row payment align-items-center">
+            <div className="col-md-6">
+              <div className="payment-method">
+                <h2>We Accept:</h2>
+                <img src="images/payment-method.png" alt="Payment Method" />
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="payment-security">
+                <h2>Secured By:</h2>
+                <img src="images/godaddy.svg" alt="Payment Security" />
+                <img src="images/norton.svg" alt="Payment Security" />
+                <img src="images/ssl.svg" alt="Payment Security" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Bottom */}
+      <div className="footer-bottom">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12 copyright">
+              <p align="center">
+                Copyright &copy; <a href="#">Estore</a>. All Rights
+                Reserved
+              </p>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+        {/* Back to Top */}
+        <a href="#" className="back-to-top">
+          <i className="fa fa-chevron-up"></i>
+        </a>
+  </div>
+  )};
+  export default Paymentpolicy;

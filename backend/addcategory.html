@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Category</title>
+    <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+    <div class="maincontainer">
+        <div class="innercontainer">
+            <img src="images/admin.jpg" alt="image not found"/>
+            <input type="button" name="logout" value="Logout" class="logout-btn" onclick="window.location.href='/logout'" />
+        </div>
+    </div>
+
+    <div class="maincontainer1">
+        <div class="innercontainer1">
+            <p>Wednesday, 12th Feb 2025</p>
+        </div>
+    </div>
+
+    <div class="maincontainer2">
+        <div class="innercontainer2">
+            <div class="page-manager-left">
+                <ul>
+                    <li><a href="/pagesummary">Page Summary</a></li>
+                    <li><a href="/addpage">Add Page</a></li>
+                    <li><a href="/categorysummary">Category Summary</a></li>
+                    <li><a href="/addcategory">Add Category</a></li>
+                    <li><a href="/productsummary">Product Summary</a></li>
+                    <li><a href="/addproduct">Add Product</a></li>
+                    <li><a href="/slidersummary">Slider Summary</a></li>
+                    <li><a href="/addslider">Add Slider</a></li>
+                    <li><a href="/brandsummary">Brand Summary</a></li>
+                    <li><a href="/addbrand">Add Brand</a></li>
+                    <li><a href="/partnersummary">Partner Summary</a></li>
+                    <li><a href="/addpartner">Add Partner</a></li>
+                    <li><a href="/changepassword">Change Password</a></li>
+                    <li>
+                        <h1>Login Information</h1>
+                        <p>Username : admin</p>
+                        <p>Email : example@domain.com</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="page-manager-right">
+                <h1>Category Manager</h1>
+                <div class="add-page">
+                    <h2 id="formTitle">Add Category</h2>
+                    <div class="add-page-table">
+                        <form id="addCategoryForm" method="post">
+                            <input type="hidden" id="edit-id" name="id" />
+                            <table>
+                                <tr>
+                                    <td>Name</td>
+                                    <td><input type="text" name="name" id="name" required /></td>
+                                </tr>
+                                <tr>
+                                    <td>Display Order</td>
+                                    <td><input type="text" name="displayorder" id="displayorder" class="display-order" required /></td>
+                                </tr>
+                                <tr>
+                                    <td>Status</td>
+                                    <td><input type="checkbox" name="status" id="status" /></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input type="submit" value="Save" class="login-btn save-btn" />
+                                        <input type="reset" value="Cancel" class="login-btn" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                        <div id="responseMsg" style="margin-top: 10px; color: green;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="maincontainer3">
+        <div class="innercontainer3"></div>
+    </div>
+
+    <script>
+        // Load edit data if available
+        window.onload = () => {
+            const editData = localStorage.getItem('editCategory');
+            if (editData) {
+                const category = JSON.parse(editData);
+                document.getElementById('edit-id').value = category.id || '';
+                document.getElementById('name').value = category.name || '';
+                document.getElementById('displayorder').value = category.displayorder || '';
+                document.getElementById('status').checked = category.status === 1 || category.status === true;
+                document.getElementById('formTitle').textContent = 'Edit Category';
+                localStorage.removeItem('editCategory');
+            }
+        };
+
+        // Reset form helper
+        function resetForm() {
+            document.getElementById('edit-id').value = '';
+            document.getElementById('formTitle').textContent = 'Add Category';
+            document.getElementById('responseMsg').textContent = '';
+            document.getElementById('status').checked = false;
+        }
+
+        // Submit form
+        document.getElementById('addCategoryForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const id = document.getElementById('edit-id').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const displayorder = parseInt(document.getElementById('displayorder').value.trim(), 10);
+            const status = document.getElementById('status').checked ? 1 : 0;
+
+            if (!name || isNaN(displayorder) || displayorder < 1) {
+                alert('Please fill all fields correctly.');
+                return;
+            }
+
+            const payload = { id, name, displayorder, status };
+            const url = id ? `/update-category/${id}` : '/add-category';
+            const method = id ? 'PUT' : 'POST';
+            const responseMsg = document.getElementById('responseMsg');
+
+            try {
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await res.json();
+
+                if (res.ok) {
+                    responseMsg.style.color = 'green';
+                    responseMsg.textContent = result.message || 'Saved successfully!';
+                    document.getElementById('addCategoryForm').reset();
+                    resetForm();
+                } else {
+                    responseMsg.style.color = 'red';
+                    responseMsg.textContent = result.message || 'Error saving category.';
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        });
+    </script>
+</body>
+</html>

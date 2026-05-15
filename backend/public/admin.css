@@ -1,0 +1,343 @@
+body
+{
+	margin:0;
+	font-family:arial;
+	background-image: url("images/pattern.png");
+}
+a
+{
+	color:blue;
+	text-decoration:underline;
+}
+.maincontainer
+{
+	
+	width:100%;
+	float:left;
+}
+.innercontainer
+{
+	width:1000px;
+	height:100px;
+	margin:auto;
+}
+.innercontainer img
+{
+	padding:15px;
+}
+.maincontainer1
+{
+	background-color:#1A7582;
+	width:100%;
+	float:left;
+}
+.innercontainer1
+{
+	width:1000px;
+	height:35px;
+	margin:auto;
+}
+.innercontainer1 p
+{
+	color:#fff;
+	margin:0;
+	padding:10px;
+	font-size:12px;
+	font-family:arial;
+}
+.maincontainer2
+{
+	width:100%;
+	float:left;
+}
+.innercontainer2
+{
+	width:1000px;
+	height:400px;
+	margin:auto;
+}
+.login-table
+{
+	width:300px;
+	margin:auto;
+	padding-top: 20px;
+}
+.login-table tr td
+{
+	font-size:14px;
+	
+}
+.login-title
+{
+	color:#1A7582;
+	font-weight:bold;
+	
+}
+.login-btn
+{
+	background-color:#1A7582;
+	color:#fff;
+	border:none;
+	margin-top:5px;
+	padding:4px 9px;
+}
+/* page-manager page*/
+.logout-btn
+{
+	width:150px;
+	background-color:#eee;
+	float:right;
+	border:none;
+	padding:5px;
+	font-weight:bold;
+}
+.page-manager-left
+{
+	float:left;
+	width:200px;
+}
+.page-manager-left ul
+{
+	margin:0;
+	list-style:none;
+	padding:20px 0px 0px 0px;
+	border:1px solid #000;
+}
+.page-manager-left ul li
+{
+	font-size:14px;
+	font-family:arial;
+	padding:7px 5px 7px 5px;
+	border-bottom:1px solid #000;
+}
+.page-manager-left span
+{
+	color:#1A7582;
+	font-weight:bold;
+}
+.page-manager-left h1
+{
+	font-size:12px;
+	color:#000;
+	font-weight:bold;
+	margin:3px 0px 3px 3px;
+}
+.page-manager-left p
+{
+	font-size:12px;
+	color:#000;
+	margin:3px 0px 3px 3px;
+}
+.page-manager-right
+{
+	width:780px;
+	float:left;
+	margin-left:15px;
+	padding:16px 0px 0px 0px;
+}
+.page-manager-right h1
+{
+	width:500px;
+	font-size:14px;	
+	color:#1A7582;
+}
+.page-manager-right p
+{
+	font-size:11px;
+	color:#000;
+	margin:0;
+}
+.page-manager-right .click-here
+{
+	text-align:center;
+	border:1px solid #000;
+	padding:5px;
+	margin-top: 10px;
+    margin-left: 0;
+	font-size:9px;
+}
+.search
+{
+	width:100%;
+	float:left;
+	font-size:12px;
+	margin-top:10px;
+	
+}
+.search table tr
+{
+	width:100%;
+	float:left;
+	border:1px solid #000;
+	border-collapse:collapse;
+		
+}
+.search table tr td
+{
+	font-weight:bold;
+	padding:3px;
+	font-size: 14px;
+}
+.search table tr td select
+{
+	width:170px;
+}
+.search-btn
+{
+	border:none;
+	padding:3px 10px 3px 10px;
+	font-size:10px;
+	background-color:#1A7582;
+	color:#fff;
+}
+.page-detail
+{
+	float:left;
+	padding:20px 0px 20px 0px!important;	
+	
+}
+.search-tb
+{
+	width:100%;
+	float:left;
+	margin-bottom:10px;
+}
+.search-tb table
+{
+	
+	width:100%;
+	float:left;
+	border:1px solid #000;
+	border-collapse:collapse;
+	
+}
+.search-tb table tr
+{
+	margin:0;
+	padding:0;
+	font-size:12px;
+}
+.search-tb table tr th
+{
+	background-color:#eee;
+}
+.search-tb table tr td
+{
+	text-align:center;
+	font-size:10px;
+	padding:3px;
+}
+.search-tb img
+{
+	width:12px;
+	height:12px;
+	padding:2px;
+}
+.pagination
+{
+	float:left;
+	padding:5px;
+}
+.delete-btn
+{
+	float:right;
+	margin-right:25px;
+	margin-top:2px;
+}
+.delete-btn input
+{
+	border:none;
+	padding:3px 10px 3px 10px;
+	font-size:10px;
+	background-color:#1A7582;
+	color:#fff;
+}
+.maincontainer3
+{
+	background-color:#1A7582;
+	width:100%;
+	float:left;
+	margin-bottom:10px;
+}
+.innercontainer3
+{
+	width:1000px;
+	height:35px;
+	margin:auto;
+}
+/* Add page */
+.add-page
+{
+	width:100%;
+	float:left;
+	
+	border:1px solid #000;
+	font-size:12px;
+}
+.add-page h2
+{
+	background-color:#eee;
+	font-size:12px;
+	border-bottom:1px solid #000;
+	padding:6px 2px 6px 6px;
+	margin:0;
+}
+.add-page-table
+{
+	float:left;
+	margin:5px;
+}
+.add-page-table table
+{
+	width:100%;
+	border:1px solid #000;
+	
+}
+.add-page table tr
+{
+	width:100%;
+	float:left;
+	border-bottom:1px solid #000;
+}
+.add-page table tr td
+{
+	width:162px;
+	text-align:right;
+	font-size: 14px;
+
+}
+.add-page table tr td input
+{
+	float:left;
+}
+/* .add-page table tr td .browse-img
+{
+	width:150px;
+} */
+.add-page table tr td select
+{
+	width:170px;
+	/* text-align:right; */
+}
+.add-page table tr td .content
+{
+	width:587px;
+}
+.browse-img
+{
+	width:80px;
+}
+.display-order
+{
+	width:80px;
+}
+.save-btn
+{
+	margin-right:5px;
+}
+#changeMessage 
+{
+	color: red;
+	text-align: center;
+	margin-top: 15px;
+}

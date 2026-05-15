@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Login Page</title>
+		<link rel="stylesheet" href="admin.css"/>
+	</head>
+	<body>
+		<div class="maincontainer">
+			<div class="innercontainer">
+				<img src="images/admin.jpg" alt="image not found"/>
+			</div>
+		</div>
+		<div class="maincontainer1">
+			<div class="innercontainer1">
+				<p>Wednesday, 12th Feb 2025</p>
+			</div>
+		</div>
+		<div class="maincontainer2">
+			<div class="innercontainer2">
+				<form id="loginForm" method="post">
+					<table class="login-table">
+						<tr>
+							<td></td>
+							<td class="login-title">Login</td>
+						</tr>
+						<tr>
+							<td>Username</td>
+							<td><input type="text" name="uname" id="username"/></td>
+						</tr>
+						<tr>
+							<td>Password</td>
+							<td><input type="password" name="pass" id="password"/></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><input type="submit" name="log" value="Login" class="login-btn" /></td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+		<div class="maincontainer1">
+			<div class="innercontainer1">
+			</div>
+		</div>
+		<p id="message"></p>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const res = await fetch('/adminlogin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await res.json();
+
+			if (result.success) {
+				window.location.href = '/addpage'; // Redirect on success
+			} else {
+				document.getElementById('message').innerText = result.message || 'Login failed.';
+			}
+			});
+    </script>
+	</body>
+</html>
