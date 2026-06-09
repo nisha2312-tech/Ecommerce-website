@@ -608,7 +608,7 @@ const reviewSliderSettings = {
                   <div className="category-item ch-400">
                     <img src={`http://localhost:5000/${product.image}`} alt={product.description}/>
                     <Link className="category-name" to={`/product/${product.id}`}>
-                      <p>{product.description}</p>
+                      <p>{product.productname}</p>
                     </Link>
                   </div>
                 </div>
@@ -624,7 +624,7 @@ const reviewSliderSettings = {
             <div className="category-item ch-250" key={product.id}>
                <img src={`http://localhost:5000/${product.image}`} alt={product.description}/>
               <Link className="category-name" to={`/product/${product.id}`}>
-                <p>{product.description}</p>
+                <p>{product.productname}</p>
               </Link>
             </div>
               ))}
@@ -634,7 +634,7 @@ const reviewSliderSettings = {
               <div className="category-item ch-150" key={product.id}>
                 <img src={`http://localhost:5000/${product.image}`} alt={product.description}/>
                 <Link className="category-name" to={`/product/${product.id}`}>
-                  <p>{product.description}</p>
+                  <p>{product.productname}</p>
                 </Link>
               </div>
               ))}
@@ -648,7 +648,7 @@ const reviewSliderSettings = {
             <div className="category-item ch-150" key={product.id}>
                <img src={`http://localhost:5000/${product.image}`} alt={product.description}/>
               <Link className="category-name" to={`/product/${product.id}`}>
-                <p>{product.description}</p>
+                <p>{product.productname}</p>
               </Link>
             </div>
               ))}
@@ -658,7 +658,7 @@ const reviewSliderSettings = {
               <div className="category-item ch-250" key={product.id}>
                 <img src={`http://localhost:5000/${product.image}`} alt={product.description}/>
                 <Link className="category-name" to={`/product/${product.id}`}>
-                  <p>{product.description}</p>
+                  <p>{product.productname}</p>
                 </Link>
               </div>
             ))}
@@ -685,7 +685,7 @@ const reviewSliderSettings = {
                   <div className="category-item ch-400">
                     <img src={`http://localhost:5000/${product.image}`} alt={product.description}/>
                     <Link className="category-name" to={`/product/${product.id}`}>
-                      <p>{product.description}</p>
+                      <p>{product.productname}</p>
                     </Link>
                   </div>
                 </div>
