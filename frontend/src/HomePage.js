@@ -317,8 +317,8 @@ const reviewSliderSettings = {
               <button
                 type="button"
                 className="navbar-toggler"
-                data-toggle="collapse"
-                data-target="#navbarCollapse"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarCollapse"
               >
                 <span className="navbar-toggler-icon"></span>
               </button>
