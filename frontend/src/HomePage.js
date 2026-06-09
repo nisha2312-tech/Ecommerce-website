@@ -416,6 +416,7 @@ const reviewSliderSettings = {
           </div>
         </div>
       </div>
+
       {/* Header Section (slider + categories) */}
       <div className="header">
         <div className="container-fluid">
@@ -528,7 +529,7 @@ const reviewSliderSettings = {
                       <img src={`http://localhost:5000/${product.image}`}
                         alt={product.description}/>
                         <Link className="img-text" to={`/product/${product.id}`}>
-                          <p>{product.description}</p>
+                          <p>{product.productname}</p>
                         </Link>
                       
                     </div>
@@ -540,7 +541,7 @@ const reviewSliderSettings = {
                       <img src={`http://localhost:5000/${product.image}`}
                         alt={product.description}/>
                         <Link className="img-text" to={`/product/${product.id}`}>
-                          <p>{product.description}</p>
+                          <p>{product.productname}</p>
                         </Link>
                       
                     </div>
