@@ -497,8 +497,9 @@ useEffect(() => {
                   <div key={product.id} className="col-md-3 mb-4">
                     
                       <div className="product-item h-100">
-                        <Link to={`/product/${product.id}`}>
+                        
                           <div className="product-image">
+                            <Link to={`/product/${product.id}`}>
                             
                               <img
                                 // src={product.image} // Ensure this path is correct
@@ -506,7 +507,7 @@ useEffect(() => {
                                 alt={product.productname}
                                 className="img-fluid" style={{ cursor: "pointer" }}
                               />
-                            
+                            </Link>
                           
                               
                             <div className="product-action">
@@ -529,7 +530,7 @@ useEffect(() => {
                           <div className="product-title">
                             <span>{product.productname}</span>
                           </div>
-                        </Link>
+                        {/* </Link> */}
                         
                         <div className="product-description">
                           <p>{product.description}</p>

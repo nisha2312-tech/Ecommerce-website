@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+// import { Link, useLocation } from "react-router-dom";
+import { Link,NavLink, useLocation } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -333,6 +334,53 @@ const reviewSliderSettings = {
                 
                 
                 </div>
+                {/* <div className="navbar-nav mr-auto">
+                  <NavLink
+                    to="/"
+                    end
+                    className={({ isActive }) =>
+                      `nav-item nav-link ${isActive ? "active" : ""}`
+                    }
+                  >
+                    Home
+                  </NavLink>
+
+                  <NavLink
+                    to="/Products"
+                    className={({ isActive }) =>
+                      `nav-item nav-link ${isActive ? "active" : ""}`
+                    }
+                  >
+                    Shop
+                  </NavLink>
+
+                  <NavLink
+                    to="/Aboutus"
+                    className={({ isActive }) =>
+                      `nav-item nav-link ${isActive ? "active" : ""}`
+                    }
+                  >
+                    About Us
+                  </NavLink>
+
+                  <NavLink
+                    to="/Myaccount"
+                    className={({ isActive }) =>
+                      `nav-item nav-link ${isActive ? "active" : ""}`
+                    }
+                  >
+                    My Account
+                  </NavLink>
+
+                  <NavLink
+                    to="/Contactus"
+                    className={({ isActive }) =>
+                      `nav-item nav-link ${isActive ? "active" : ""}`
+                    }
+                  >
+                    Contact Us
+                  </NavLink>
+                </div> */}
   
                 
                   {/* ===================== USER DROPDOWN ===================== */}
