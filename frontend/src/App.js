@@ -27,7 +27,8 @@ import Shippingpolicy from "./Shippingpolicy";
 import Returnpolicy from "./Returnpolicy";
 import Forgotpassword from "./Forgotpassword";
 import Resetpassword from "./Resetpassword";
-// import Header from "./components/Header";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 
 
@@ -54,7 +55,9 @@ function App() {
         <Route path="/Returnpolicy" element={<Returnpolicy/>}/>
         <Route path="/Forgotpassword" element={<Forgotpassword/>}/>
         <Route path="/Resetpassword/:token" element={<Resetpassword/>}/>
-        {/* <Route path="/Header" element={<Header/>}/> */}
+        <Route path="/Header" element={<Header/>}/>
+        <Route path="/Footer" element={<Footer/>}/>
+
         
 
 

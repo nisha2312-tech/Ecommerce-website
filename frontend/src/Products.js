@@ -8,6 +8,8 @@ import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 
 import "./style.css";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 const Products = () => {
   const categoryIcons = {
@@ -497,9 +499,9 @@ useEffect(() => {
                   <div key={product.id} className="col-md-3 mb-4">
                     
                       <div className="product-item h-100">
-                        
+                        <Link to={`/product/${product.id}`}>
                           <div className="product-image">
-                            <Link to={`/product/${product.id}`}>
+                            
                             
                               <img
                                 // src={product.image} // Ensure this path is correct
@@ -507,7 +509,7 @@ useEffect(() => {
                                 alt={product.productname}
                                 className="img-fluid" style={{ cursor: "pointer" }}
                               />
-                            </Link>
+                            
                           
                               
                             <div className="product-action">
@@ -526,6 +528,7 @@ useEffect(() => {
                             </div>
                             
                           </div>
+                          </Link>
                           
                           <div className="product-title">
                             <span>{product.productname}</span>
@@ -703,109 +706,7 @@ useEffect(() => {
         {/* Brand End */}
 
         {/* Footer Start */}
-        <div className="footer">
-          <div className="container-fluid">
-            <div className="row">
-
-              <div className="col-lg-3 col-md-6">
-                <div className="footer-widget">
-                  <h2>Get in Touch</h2>
-                  <div className="contact-info">
-                    <p><i className="fa fa-map-marker"></i> 123 E Store, Los Angeles, USA</p>
-                    <p><i className="fa fa-envelope"></i> email@example.com</p>
-                    <p><i className="fa fa-phone"></i> +123-456-7890</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Social */}
-              <div className="col-lg-3 col-md-6">
-                <div className="footer-widget">
-                  <h2>Follow Us</h2>
-                  <div className="contact-info">
-                    <div className="social">
-                      <a href=""><i className="fab fa-twitter"></i></a>
-                      <a href=""><i className="fab fa-facebook-f"></i></a>
-                      <a href=""><i className="fab fa-linkedin-in"></i></a>
-                      <a href=""><i className="fab fa-instagram"></i></a>
-                      <a href=""><i className="fab fa-youtube"></i></a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Company Info */}
-              <div className="col-lg-3 col-md-6">
-                <div className="footer-widget">
-                  <h2>Company Info</h2>
-                  <ul>
-                    <li>
-                      <Link to="/Aboutus" >About Us</Link>
-                    
-                    </li>
-                    <li>
-                      <Link to="/Privacypolicy">Privacy Policy</Link>
-                    </li>
-                    <li>
-                      <Link to="/Terms">Terms & Condition</Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-  
-              {/* Purchase Info */}
-              <div className="col-lg-3 col-md-6">
-                <div className="footer-widget">
-                  <h2>Purchase Info</h2>
-                  <ul>
-                    <li>
-                      <Link to="/Paymentpolicy">Payment Policy</Link>
-                    </li>
-                    <li>
-                      <Link to="/Shippingpolicy">Shippingpolicy</Link>
-                    </li>
-                    <li>
-                      <Link to="/Returnpolicy">Return Policy</Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div className="row payment align-items-center">
-              <div className="col-md-6">
-                <div className="payment-method">
-                  <h2>We Accept:</h2>
-                  <img src="images/payment-method.png" alt="Payment Method" />
-                </div>
-              </div>
-              <div className="col-md-6">
-                <div className="payment-security">
-                  <h2>Secured By:</h2>
-                  <img src="images/godaddy.svg" alt="Security" />
-                  <img src="images/norton.svg" alt="Security" />
-                  <img src="images/ssl.svg" alt="Security" />
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-        {/* Footer End */}
-
-        <div className="footer-bottom">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12 copyright">
-              <p align="center">
-                Copyright &copy; <a href="#">Estore</a>. All Rights
-                Reserved
-              </p>
-            </div>
-            
-          </div>
-        </div>
-      </div>
+        <Footer/>
         {/* Back to Top */}
         <a href="#" className="back-to-top">
           <i className="fa fa-chevron-up"></i>
