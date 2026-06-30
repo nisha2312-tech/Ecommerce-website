@@ -73,12 +73,15 @@
                 <!-- 🧠 Scripts -->
                 <script>
                     let allProducts = [];
+                    let currentPage = 1;
+                    let rowsperPage = 5;
                     // 🔄 Load all data
                     function loadData() {
                         fetch('/api/products') // Use API route instead of HTML file
                             .then(res => res.json())
                             .then(data => {
                                 allProducts = data;
+                                currentPage = 1;
                                 renderTable(allProducts);
                             })
                             .catch(err => {
@@ -89,7 +92,13 @@
 
                     // 🖥️ Render data in table
                     function renderTable(data) {
+                         // Calculate pagination
+                        let start = (currentPage - 1) * rowsperPage;
+                        let end = start + rowsperPage;
+
+                        let paginatedData = data.slice(start, end);
                         if (!data.length) {
+                           
                             document.getElementById('displayData').innerHTML = 'No products found.';
                             return;
                         }
@@ -97,7 +106,8 @@
                         let html = '<table border="1" width="100%" cellpadding="8" cellspacing="0">';
                         html += '<tr><th>ID</th><th>Category Id</th><th>Brand Id</th><th>Product Name</th><th>Description</th><th>Image</th><th>Price</th><th>Display Order</th><th>Status</th><th>Edit</th><th>Delete</th></tr>';
 
-                        data.forEach(item => {
+                        // data.forEach(item => {
+                        paginatedData.forEach(item => {
                             html += `
                                 <tr>
                                     <td>${item.id}</td>
@@ -116,9 +126,45 @@
                         });
 
                         html += '</table>';
+                        html += '<div id="pagination" style="margin-top:20px;text-align:center;"></div>';
                         document.getElementById('displayData').innerHTML = html;
+                        renderPagination(data.length);
+                    }
+                    function renderPagination(totalRows) {
+                    let totalPages = Math.ceil(totalRows / rowsperPage);
+
+                    let html = "";
+
+                    // Previous Button
+                    if(currentPage > 1){
+                        html += `<button onclick="changePage(${currentPage-1})">Previous</button>`;
                     }
 
+                    for(let i=1;i<=totalPages;i++){
+
+                        if(i===currentPage){
+                            html += `<button style="background:blue;color:white;">${i}</button>`;
+                        }else{
+                            html += `<button onclick="changePage(${i})">${i}</button>`;
+                        }
+
+                    }
+
+                    // Next Button
+                    if(currentPage < totalPages){
+                        html += `<button onclick="changePage(${currentPage+1})">Next</button>`;
+                    }
+
+                    document.getElementById("pagination").innerHTML = html;
+
+                }
+                function changePage(page){
+
+                    currentPage = page;
+
+                    renderTable(allProducts);
+
+                }
 
                     // ❌ Delete
                     function deleteData(id) {
@@ -148,7 +194,9 @@
                         const filtered = allProducts.filter(p =>
                             p.productname.toLowerCase().includes(term)
                         );
+                        currentPage = 1;
                         renderTable(filtered);
+
                     });
 
                     // ✏️ Edit product - store product data in localStorage and redirect
