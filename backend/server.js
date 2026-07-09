@@ -14,6 +14,7 @@ const PORT = 5000;
 
 
 // MySQL Connection
+
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',           // Use environment variables in production

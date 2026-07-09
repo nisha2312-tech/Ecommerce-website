@@ -299,9 +299,13 @@ const Aboutus = () => {
         {/* Footer Start */}
         <Footer/>
         {/* Back to Top */}
-        <a href="#" className="back-to-top">
+        {/* <a href="#" className="back-to-top">
           <i className="fa fa-chevron-up"></i>
-        </a>
+        </a> */}
+        <button
+            className="back-to-top"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          ><i className="fa fa-chevron-up"></i></button>
   </div>
   )};
   export default Aboutus;
