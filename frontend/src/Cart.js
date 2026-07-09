@@ -127,6 +127,11 @@ const Cart = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  // Shipping charge
+    const shippingCost = cart.length > 0 ? 5 : 0; // $5 if cart is not empty, otherwise $0
+  //Grand total
+    const grandTotal = subtotal + shippingCost; 
+
     const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
@@ -238,10 +243,10 @@ const Cart = () => {
                         Sub Total : <span>${subtotal}</span>
                       </p>
                       <p className="ship-cost">
-                        Shipping Cost : <span>$5</span>
+                        Shipping Cost : <span>${shippingCost}</span>
                       </p>
                       <h1>
-                        Grand Total : <span>${subtotal + 5}</span>
+                        Grand Total : <span>${grandTotal}</span>
                       </h1>
                     </div>
                   </div>
