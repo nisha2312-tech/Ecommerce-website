@@ -325,9 +325,8 @@ useEffect(() => {
                                                 >
                                                 <i className="fa fa-shopping-cart"></i> Add to Cart
                                                 </button>
-                                            <button className="btn" href="#">
-                                                <Link to="/Checkout"><i className="fa fa-shopping-bag"></i>Buy Now</Link>
-                                            </button>
+                                                <Link to="/Checkout" className="btn"><i className="fa fa-shopping-bag"></i>Buy Now</Link>
+                                            
                                         </div>
                                     </div>
                                 </div>
