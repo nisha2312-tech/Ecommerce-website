@@ -96,7 +96,7 @@ const Checkout = () => {
       // 1️⃣ SAVE ADDRESS(optional)
         try {
           
-          await axios.post(
+          const res = await axios.post(
             "http://localhost:5000/api/address",
             {
               firstname: billing.firstname,

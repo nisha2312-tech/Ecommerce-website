@@ -293,7 +293,7 @@ const reviewSliderSettings = {
 
   return (
     <div>
-      <Header />
+      <Header />  
 
       {/* Header Section (slider + categories) */}
       <div className="header">
