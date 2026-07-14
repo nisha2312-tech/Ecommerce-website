@@ -180,10 +180,7 @@ function Header() {
                   <i className="fa fa-heart"></i>
                   <span>{wishlist.length}</span>
                 </Link>
-                {/* <a href="cart.html" className="btn cart">
-                  <i className="fa fa-shopping-cart"></i>
-                  <span>(0)</span>
-                </a> */}
+               
                 <Link to="/Cart" className="btn cart">
                   <i className="fa fa-shopping-cart"></i>
                   <span>({cart.reduce((sum, item) => sum + item.quantity, 0)})</span>
