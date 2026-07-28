@@ -22,11 +22,12 @@ function Header() {
   // --------------------
   const wishlistKey = username ? `wishlist_${username}` : null;
   // USER-SPECIFIC CART KEY
-  const cartKey = username ? `cart_${username}` : null;
+  // const cartKey = username ? `cart_${username}` : null;
   const [wishlist, setWishlist] = useState([]);
   // Cart state (for count)
   // const [cart, setCart] = useState([]);
-  const { cart, setCart } = useContext(CartContext);
+  // const { cart, setCart } = useContext(CartContext);
+  const { cart } = useContext(CartContext);
 
 
 
@@ -53,41 +54,41 @@ function Header() {
   }, []);
 
     // Init scripts and load wishlist once
-    useEffect(() => {
-      // initHomeScripts();
-      if(!wishlistKey){
-        setWishlist([]);
-      }
-      else{
-        setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
-      }
-        if (cartKey) {
-      setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
-      }
-    }, [wishlistKey, cartKey]);
+    // useEffect(() => {
+  
+    //   if(!wishlistKey){
+    //     setWishlist([]);
+    //   }
+    //   else{
+    //     setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
+    //   }
+    //     if (cartKey) {
+    //   setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
+    //   }
+    // }, [wishlistKey, cartKey]);
 
     // Add to Cart function
-    const addToCart = (product) => {
-    if (!cartKey) {
-      alert("Please Login First");
-      return;
-    }
-    let newCart = [...cart];
-    const existingIndex = newCart.findIndex((p) => p.id === product.id);
+  //   const addToCart = (product) => {
+  //   if (!cartKey) {
+  //     alert("Please Login First");
+  //     return;
+  //   }
+  //   let newCart = [...cart];
+  //   const existingIndex = newCart.findIndex((p) => p.id === product.id);
 
-    if (existingIndex !== -1) {
-      newCart[existingIndex].quantity += 1;
-    } else {
-      newCart.push({
-        ...product,
-        quantity: 1,
-      });
-    }
+  //   if (existingIndex !== -1) {
+  //     newCart[existingIndex].quantity += 1;
+  //   } else {
+  //     newCart.push({
+  //       ...product,
+  //       quantity: 1,
+  //     });
+  //   }
 
-    setCart(newCart);
-    localStorage.setItem(cartKey, JSON.stringify(newCart));
-    alert("Added to Cart!");
-  };
+  //   setCart(newCart);
+  //   localStorage.setItem(cartKey, JSON.stringify(newCart));
+  //   alert("Added to Cart!");
+  // };
 
   
   return  (

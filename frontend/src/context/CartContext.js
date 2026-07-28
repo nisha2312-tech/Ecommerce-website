@@ -13,8 +13,11 @@ export const CartProvider = ({ children }) => {
     if (cartKey) {
       setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
     }
+    else {
+      setCart([]);
+    }
   }, [cartKey]);
-
+  
   useEffect(() => {
     if (cartKey) {
       localStorage.setItem(cartKey, JSON.stringify(cart));
