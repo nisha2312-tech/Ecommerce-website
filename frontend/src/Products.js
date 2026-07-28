@@ -6,10 +6,13 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 // import { initHomeScripts } from "./main";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
+import { useContext } from "react";
+import { CartContext } from "../context/CartContext";
 
 import "./style.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+
 
 const Products = () => {
   const categoryIcons = {

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useContext } from "react";
+import { CartContext } from "../context/CartContext";
 function Header() {
       //login
     /* ===================== AUTH CHECK ===================== */
@@ -23,7 +25,10 @@ function Header() {
   const cartKey = username ? `cart_${username}` : null;
   const [wishlist, setWishlist] = useState([]);
   // Cart state (for count)
-  const [cart, setCart] = useState([]);
+  // const [cart, setCart] = useState([]);
+  const { cart, setCart } = useContext(CartContext);
+
+
 
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,6 +65,31 @@ function Header() {
       setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
       }
     }, [wishlistKey, cartKey]);
+
+    // Add to Cart function
+    const addToCart = (product) => {
+    if (!cartKey) {
+      alert("Please Login First");
+      return;
+    }
+    let newCart = [...cart];
+    const existingIndex = newCart.findIndex((p) => p.id === product.id);
+
+    if (existingIndex !== -1) {
+      newCart[existingIndex].quantity += 1;
+    } else {
+      newCart.push({
+        ...product,
+        quantity: 1,
+      });
+    }
+
+    setCart(newCart);
+    localStorage.setItem(cartKey, JSON.stringify(newCart));
+    alert("Added to Cart!");
+  };
+
+  
   return  (
     <div>
       <div className="top-bar">
@@ -92,13 +122,7 @@ function Header() {
             </button>
 
             <div className="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-              {/* <div className="navbar-nav mr-auto">
-                <Link to="/" className="nav-item nav-link active">Home</Link>
-                <Link to="/Products" className="nav-item nav-link">Shop</Link>
-                <Link to="/Aboutus" className="nav-item nav-link">Aboutus</Link>
-                <Link to="/Myaccount" className="nav-item nav-link">My Account</Link>
-                <Link to="/Contactus" className="nav-item nav-link">Contact us</Link>
-              </div> */}
+              
               <div className="navbar-nav mr-auto">
                 {pages.map((page) => (
                   <Link
