@@ -7,7 +7,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useContext } from "react";
-import { CartContext } from "../context/CartContext";
+import { CartContext } from "./context/CartContext";
 
 import "./style.css";
 import Header from "./components/Header";
@@ -59,7 +59,8 @@ const Products = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [wishlist, setWishlist] = useState([]);
   // Cart state (for count)
-  const [cart, setCart] = useState([]);
+  // const [cart, setCart] = useState([]);
+  const { cart, setCart } = useContext(CartContext);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [brands, setBrands] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState(null);
@@ -113,10 +114,8 @@ useEffect(() => {
     else{
       setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
     }
-      if (cartKey) {
-    setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
-    }
-  }, [wishlistKey, cartKey]);
+      
+  }, [wishlistKey]);
 
   // Add/remove product from wishlist
   const toggleWishlist = (product) => {
@@ -142,26 +141,34 @@ useEffect(() => {
   };
     // Add to Cart function
     const addToCart = (product) => {
-    if (!cartKey) {
-      alert("Please Login First");
-      return;
-    }
-    let newCart = [...cart];
-    const existingIndex = newCart.findIndex((p) => p.id === product.id);
+  if (!username) {
+    alert("Please Login First");
+    return;
+  }
 
-    if (existingIndex !== -1) {
-      newCart[existingIndex].quantity += 1;
-    } else {
-      newCart.push({
+  const existing = cart.find(item => item.id === product.id);
+
+  let updatedCart;
+
+  if (existing) {
+    updatedCart = cart.map(item =>
+      item.id === product.id
+        ? { ...item, quantity: item.quantity + 1 }
+        : item
+    );
+  } else {
+    updatedCart = [
+      ...cart,
+      {
         ...product,
         quantity: 1,
-      });
-    }
+      },
+    ];
+  }
 
-    setCart(newCart);
-    localStorage.setItem(cartKey, JSON.stringify(newCart));
-    alert("Added to Cart!");
-  };
+  setCart(updatedCart);
+  alert("Added to Cart!");
+};
   
 
   // Fetch products
