@@ -1,9 +1,11 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect,useRef,useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "font-awesome/css/font-awesome.min.css";
 import { initHomeScripts } from "./main";
 import "./style.css";
+import { CartContext } from "./context/CartContext";
+import { WishlistContext } from "./context/WishlistContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 // this code convert into react js and node js from backend
@@ -12,18 +14,12 @@ const Checkout = () => {
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
     const isLoggedIn = !!token;
-    // --------------------
-    // USER-SPECIFIC KEY
-    // --------------------
-    const wishlistKey = username ? `wishlist_${username}` : null;
-    // USER-SPECIFIC CART KEY
-    const cartKey = username ? `cart_${username}` : null;
-    //states
 
-    const [wishlist, setWishlist] = useState([]);
+    const { wishlist,setWishlist } = useContext(WishlistContext);
+    const { cart, setCart } = useContext(CartContext);
+  
 
-    // Cart state (for count)
-    const [cart, setCart] = useState([]);
+
     const [orders, setOrders] = useState([]);
     const [paymentmethod, setPaymentmethod] = useState("");
     const [billing, setBilling] = useState({
@@ -42,20 +38,6 @@ const Checkout = () => {
   const [address, setAddress] = useState(null);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   
-      // Init scripts and load wishlist once
-    useEffect(() => {
-      initHomeScripts();
-      if(!wishlistKey){
-        setWishlist([]);
-      }
-      else{
-        setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
-      }
-        if (cartKey) {
-      setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
-      }
-    }, [wishlistKey, cartKey]);
-
   
 
   
@@ -144,9 +126,40 @@ const Checkout = () => {
     );      
       alert("Order placed successfully!");
         console.log(res.data);
-        // Clear cart after order
-          localStorage.removeItem(cartKey);
-          setCart([]);
+        
+        // ================================
+        // CLEAR CART & WISHLIST AFTER ORDER
+        // ================================
+
+        const username = localStorage.getItem("username");
+
+        if (username) {
+
+          localStorage.removeItem(`cart_${username}`);
+        }
+        // Update React Context
+        setCart([]);
+        // ================================
+        // CLEAR CHECKOUT FORM
+        // ================================
+
+        setBilling({
+          firstname: "",
+          lastname: "",
+          email: "",
+          mobile: "",
+          address: "",
+          country: "",
+          city: "",
+          state: "",
+          zip: ""
+        });
+
+        setPaymentmethod("");
+
+        setAddress(null); // remove saved address box if required
+
+
       } 
       catch (error) {
         console.log("FULL ERROR:", error);
@@ -274,6 +287,7 @@ const Checkout = () => {
                         value={billing.country}
                         onChange={handleBillingChange}
                       >
+                        <option value="">Select Country</option>
                         <option>United States</option>
                         <option>Afghanistan</option>
                         <option>Albania</option>

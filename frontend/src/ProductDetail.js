@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import Slider from "react-slick";
@@ -8,8 +8,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 // import { initHomeScripts } from "./main";
 import "./style.css";
+import { CartContext } from "./context/CartContext";
+import { WishlistContext } from "./context/WishlistContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+
 
 const ProductDetail = () => {
 
@@ -17,62 +20,15 @@ const ProductDetail = () => {
         const token = localStorage.getItem("token");
         const username = localStorage.getItem("username");
         const isLoggedIn = !!token;
-        // --------------------
-        // USER-SPECIFIC KEY
-        // --------------------
-        const wishlistKey = username ? `wishlist_${username}` : null;
-        // USER-SPECIFIC CART KEY
-        const cartKey = username ? `cart_${username}` : null;
-        //states
-    
-        const [wishlist, setWishlist] = useState([]);
-        // Cart state (for count)
-        const [cart, setCart] = useState([]); 
+      
+        const { wishlist, setWishlist } = useContext(WishlistContext);
+        const { cart, setCart } = useContext(CartContext);
         const [reviews, setReviews] = useState([]);
         const [rating, setRating] = useState(0);
         const [comment, setComment] = useState("");
     
-        // Init scripts and load wishlist once
-          useEffect(() => {
-            // initHomeScripts();
-            
-            if(!wishlistKey){
-              setWishlist([]);
-            }
-            else{
-              setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
-            }
-              if (cartKey) {
-            setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
-            }
-          }, [wishlistKey, cartKey]);
-        
-          // Add/remove product from wishlist
-          const toggleWishlist = (product) => {
-            if(!wishlistKey) {
-              alert("Please login to use wishlist");
-              return;
-            }
-            let newWishlist;
-            if (wishlist.some((p) => p.id === product.id)) {
-              // Remove if already in wishlist
-              newWishlist = wishlist.filter((p) => p.id !== product.id);
-            } else {
-              // Add if not in wishlist
-              newWishlist = [...wishlist, product];
-            }
-            setWishlist(newWishlist);
-            localStorage.setItem(wishlistKey, JSON.stringify(newWishlist));
-          };
-        
-          // Check if product is in wishlist
-          const isInWishlist = (productId) => {
-            return wishlist.some((p) => p.id === productId);
-          };
           
 
-
-    // const username = localStorage.getItem("username");
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [error, setError] = useState("");
@@ -195,7 +151,7 @@ useEffect(() => {
     // add to cart button code
 
     const addToCart = (product) => {
-    if (!cartKey) return;
+   
 
     let newCart = [...cart];
     const existingIndex = newCart.findIndex((p) => p.id === product.id);
@@ -209,7 +165,7 @@ useEffect(() => {
       });
     }
     setCart(newCart);
-    localStorage.setItem(cartKey, JSON.stringify(newCart));
+    // localStorage.setItem(cartKey, JSON.stringify(newCart));
     alert("Added to Cart!");
   };
   // Searching

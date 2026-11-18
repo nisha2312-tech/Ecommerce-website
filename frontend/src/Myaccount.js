@@ -18,9 +18,9 @@
     // --------------------
       // USER-SPECIFIC KEY
       // ------------------
-      const wishlistKey = username ? `wishlist_${username}` : null;
-      // USER-SPECIFIC CART KEY
-      const cartKey = username ? `cart_${username}` : null;
+      // const wishlistKey = username ? `wishlist_${username}` : null;
+      // // USER-SPECIFIC CART KEY
+      // const cartKey = username ? `cart_${username}` : null;
         // states
         const navigate = useNavigate();
         const [searchTerm, setSearchTerm] = useState("");
@@ -169,20 +169,6 @@
           }, []);
 
 
-          // wishlist
-          useEffect(() => {
-            // initHomeScripts();
-            if(!wishlistKey){
-              setWishlist([]);
-            }
-            else{
-              setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
-            }
-              if (cartKey) {
-            setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
-            }
-          }, [wishlistKey, cartKey]);
-          
           // view button code for orders tab
           const handleView = async (productId) => {
 

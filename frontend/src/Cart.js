@@ -1,105 +1,37 @@
-import React from "react";
-import { useEffect, useState} from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { Link, useNavigate} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "font-awesome/css/font-awesome.min.css";
+
 import { initHomeScripts } from "./main";
 import "./style.css";
+import { CartContext } from "./context/CartContext";
+import { WishlistContext } from "./context/WishlistContext";
+
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 const Cart = () => {
 
-
+   const navigate = useNavigate();
     // Auth
   const token = localStorage.getItem("token");
   const username = localStorage.getItem("username");
   const isLoggedIn = !!token;
-  // --------------------
-  // USER-SPECIFIC KEY
-  // --------------------
-  const wishlistKey = username ? `wishlist_${username}` : null;
-  // USER-SPECIFIC CART KEY
-  const cartKey = username ? `cart_${username}` : null;
-  // states
-  const [wishlist, setWishlist] = useState([]);
-    // Cart state (for count)
-  const [cart, setCart] = useState([]); 
 
+  const { wishlist, setWishlist } = useContext(WishlistContext);
+  const { cart, setCart } = useContext(CartContext);
   // Init scripts and load wishlist once
-    useEffect(() => {
-      initHomeScripts();
-      if(!wishlistKey){
-        setWishlist([]);
-      }
-      else{
-        setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
-      }
-        if (cartKey) {
-      setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
-      }
-    }, [wishlistKey, cartKey]);
-  
-    // Add/remove product from wishlist
-    const toggleWishlist = (product) => {
-      if(!wishlistKey) {
-        alert("Please login to use wishlist");
-        return;
-      }
-      let newWishlist;
-      if (wishlist.some((p) => p.id === product.id)) {
-        // Remove if already in wishlist
-        newWishlist = wishlist.filter((p) => p.id !== product.id);
-      } else {
-        // Add if not in wishlist
-        newWishlist = [...wishlist, product];
-      }
-      setWishlist(newWishlist);
-      localStorage.setItem(wishlistKey, JSON.stringify(newWishlist));
-    };
-  
-    // Check if product is in wishlist
-    const isInWishlist = (productId) => {
-      return wishlist.some((p) => p.id === productId);
-    };
-      // Add to Cart function
-    //   const addToCart = (product) => {
-    //   if (!cartKey) return;
-  
-    //   let newCart = [...cart];
-    //   const existingIndex = newCart.findIndex((p) => p.id === product.id);
-  
-    //   if (existingIndex !== -1) {
-    //     newCart[existingIndex].quantity += 1;
-    //   } else {
-    //     newCart.push({
-    //       ...product,
-    //       quantity: 1,
-    //     });
-    //   }
-  
-    //   setCart(newCart);
-    //   localStorage.setItem(cartKey, JSON.stringify(newCart));
-    //   alert("Added to Cart!");
-    // };
+    
 
-
-  // ==========================
-  useEffect(() => {
-  if (!cartKey) {
-    setCart([]);
-    return;
-  }
-
-    setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
-  }, [cartKey]);
   
     // Remove from cart
 
   const removeFromCart = (id, size, color) => {
   if (!window.confirm("Remove this item from cart?")) return;
-  const newCart = cart.filter(
+
+  const updatedCart = cart.filter(
     (item) =>
       !(
         item.id === id &&
@@ -108,20 +40,22 @@ const Cart = () => {
       )
   );
 
-  setCart(newCart);
-  localStorage.setItem(cartKey, JSON.stringify(newCart));
+  setCart(updatedCart);
+};
+  //update quantity
+  const updateQuantity = (id, amount) => {
+  const updatedCart = cart.map((item) =>
+    item.id === id
+      ? {
+          ...item,
+          quantity: Math.max(1, item.quantity + amount),
+        }
+      : item
+  );
+
+  setCart(updatedCart);
 };
 
-  const updateQuantity = (id, amount) => {
-    const newCart = cart.map((item) =>
-      item.id === id
-        ? { ...item, quantity: Math.max(1, item.quantity + amount) }
-        : item
-    );
-
-    setCart(newCart);
-    localStorage.setItem(cartKey, JSON.stringify(newCart));
-  };
   // subtotal
   const subtotal = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -135,7 +69,7 @@ const Cart = () => {
     const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   return (

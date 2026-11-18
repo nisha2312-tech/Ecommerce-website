@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -18,69 +17,15 @@ const Contactus = () => {
     // --------------------
     // USER-SPECIFIC KEY
     // --------------------
-    const wishlistKey = username ? `wishlist_${username}` : null;
-    // USER-SPECIFIC CART KEY
-    const cartKey = username ? `cart_${username}` : null;
+    // const wishlistKey = username ? `wishlist_${username}` : null;
+    // // USER-SPECIFIC CART KEY
+    // const cartKey = username ? `cart_${username}` : null;
     //states
 
     const [wishlist, setWishlist] = useState([]);
     // Cart state (for count)
     const [cart, setCart] = useState([]); 
 
-    // Init scripts and load wishlist once
-      useEffect(() => {
-        if(!wishlistKey){
-          setWishlist([]);
-        }
-        else{
-          setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
-        }
-          if (cartKey) {
-        setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
-        }
-      }, [wishlistKey, cartKey]);
-    
-      // Add/remove product from wishlist
-      const toggleWishlist = (product) => {
-        if(!wishlistKey) {
-          alert("Please login to use wishlist");
-          return;
-        }
-        let newWishlist;
-        if (wishlist.some((p) => p.id === product.id)) {
-          // Remove if already in wishlist
-          newWishlist = wishlist.filter((p) => p.id !== product.id);
-        } else {
-          // Add if not in wishlist
-          newWishlist = [...wishlist, product];
-        }
-        setWishlist(newWishlist);
-        localStorage.setItem(wishlistKey, JSON.stringify(newWishlist));
-      };
-    
-      // Check if product is in wishlist
-      const isInWishlist = (productId) => {
-        return wishlist.some((p) => p.id === productId);
-      };
-        // Add to Cart function
-        const addToCart = (product) => {
-        if (!cartKey) return;
-    
-        let newCart = [...cart];
-        const existingIndex = newCart.findIndex((p) => p.id === product.id);
-    
-        if (existingIndex !== -1) {
-          newCart[existingIndex].quantity += 1;
-        } else {
-          newCart.push({
-            ...product,
-            quantity: 1,
-          });
-        }
-    
-        setCart(newCart);
-        localStorage.setItem(cartKey, JSON.stringify(newCart));
-      };
 
     const [formData, setFormData] = useState({
     name: "",

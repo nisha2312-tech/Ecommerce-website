@@ -8,7 +8,6 @@ const multer = require('multer');
 const { url } = require('inspector');
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = 5000;
 
@@ -982,6 +981,7 @@ app.post("/userlogin", (req, res) => {
 
   console.log("Login Request:", email, password);
 
+
   if (!email || !password)
     return res.status(400).send({ message: "Email and Password required" });
 
@@ -1004,6 +1004,7 @@ app.post("/userlogin", (req, res) => {
     const token = jwt.sign({ id: user.id, email: user.email }, "secret123", { expiresIn: "7d" });
 
     res.send({ message: "Login Successful", token, user });
+  
   });
 });
 

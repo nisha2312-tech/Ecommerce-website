@@ -3,37 +3,68 @@ import { createContext, useEffect, useState } from "react";
 export const WishlistContext = createContext();
 
 export const WishlistProvider = ({ children }) => {
-  const username = localStorage.getItem("username");
-  const wishlistKey = username ? `wishlist_${username}` : null;
 
   const [wishlist, setWishlist] = useState([]);
 
-  // Load wishlist
-  useEffect(() => {
-    if (wishlistKey) {
+
+  // Load wishlist according to logged user
+  const loadWishlist = () => {
+
+    const username = localStorage.getItem("username");
+
+    if (username) {
+
+      const wishlistKey = `wishlist_${username}`;
+
       const savedWishlist =
         JSON.parse(localStorage.getItem(wishlistKey)) || [];
-      setWishlist(savedWishlist);
-    } else {
-      setWishlist([]);
-    }
-  }, [wishlistKey]);
 
-  // Save wishlist
+      setWishlist(savedWishlist);
+
+    } else {
+
+      setWishlist([]);
+
+    }
+
+  };
+
+
+  // First load
   useEffect(() => {
-    if (wishlistKey) {
+    loadWishlist();
+  }, []);
+
+
+
+  // Save whenever wishlist changes
+  useEffect(() => {
+
+    const username = localStorage.getItem("username");
+
+    if (username && wishlist.length > 0) {
+
       localStorage.setItem(
-        wishlistKey,
+        `wishlist_${username}`,
         JSON.stringify(wishlist)
       );
+
     }
-  }, [wishlist, wishlistKey]);
+
+  }, [wishlist]);
+
+
 
   return (
     <WishlistContext.Provider
-      value={{ wishlist, setWishlist }}
+      value={{
+        wishlist,
+        setWishlist,
+        loadWishlist
+      }}
     >
       {children}
     </WishlistContext.Provider>
   );
+
 };

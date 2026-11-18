@@ -1,14 +1,17 @@
-import React, { useState,useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState,useEffect, useContext } from "react";
+import { Link, useNavigate} from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
+import { CartContext } from "./context/CartContext";
+import { WishlistContext } from "./context/WishlistContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 const Login = () => {
 
   /* ===================== REGISTER STATES ===================== */
+  const navigate = useNavigate();
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -16,7 +19,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [retypePassword, setRetypePassword] = useState("");
 
-  /* ===================== LOGIN STATES ===================== */
+  /* ===================== LOGIN STATES 
+  ===================== */
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
@@ -25,6 +29,10 @@ const Login = () => {
   const username = localStorage.getItem("username");
   const isLoggedIn = !!token;
   
+  
+
+  const { loadCart, setCart } = useContext(CartContext);
+  const { loadWishlist, setWishlist } = useContext(WishlistContext);
   /* ===================== REGISTER ===================== */
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
@@ -57,12 +65,18 @@ const Login = () => {
     })
     .then((res) => {
       if (res.data.token) {
+   
+
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("username", res.data.user.firstname);
         localStorage.setItem("email", res.data.user.email);
         localStorage.setItem("userid", res.data.user.id);
 
+
         alert("Login successful");
+        // loadCart();
+        // loadWishlist();
+        // navigate("/Products");
         window.location.href = "/Products";
       } else {
         alert("Invalid login credentials");
@@ -79,77 +93,13 @@ const Login = () => {
 
   /* ===================== LOGOUT ===================== */
   const handleLogout = () => {
+    setCart([]);
+    setWishlist([]);
     localStorage.removeItem("token");
     localStorage.removeItem("username");
-    window.location.href = "/login";
+    navigate("/login");
   };
-  // --------------------
-  // USER-SPECIFIC KEY
-  // --------------------
-  const wishlistKey = username ? `wishlist_${username}` : null;
-  // USER-SPECIFIC CART KEY
-  const cartKey = username ? `cart_${username}` : null;
-  const [wishlist, setWishlist] = useState([]);
-  // Cart state (for count)
-  const [cart, setCart] = useState([]);  
-  // Init scripts and load wishlist once
-    useEffect(() => {
-      // initHomeScripts();
-      if(!wishlistKey){
-        setWishlist([]);
-      }
-      else{
-        setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
-      }
-        if (cartKey) {
-      setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
-      }
-    }, [wishlistKey, cartKey]);
-  
-    // Add/remove product from wishlist
-    const toggleWishlist = (product) => {
-      if(!wishlistKey) {
-        alert("Please login to use wishlist");
-        return;
-      }
-      let newWishlist;
-      if (wishlist.some((p) => p.id === product.id)) {
-        // Remove if already in wishlist
-        newWishlist = wishlist.filter((p) => p.id !== product.id);
-      } else {
-        // Add if not in wishlist
-        newWishlist = [...wishlist, product];
-      }
-      setWishlist(newWishlist);
-      localStorage.setItem(wishlistKey, JSON.stringify(newWishlist));
-    };
-  
-    // Check if product is in wishlist
-    const isInWishlist = (productId) => {
-      return wishlist.some((p) => p.id === productId);
-    };
-      // Add to Cart function
-      const addToCart = (product) => {
-      if (!cartKey){
-        alert("please login first") 
-        return;
-      }
-      let newCart = [...cart];
-      const existingIndex = newCart.findIndex((p) => p.id === product.id);
-  
-      if (existingIndex !== -1) {
-        newCart[existingIndex].quantity += 1;
-      } else {
-        newCart.push({
-          ...product,
-          quantity: 1,
-        });
-      }
-  
-      setCart(newCart);
-      localStorage.setItem(cartKey, JSON.stringify(newCart));
-      alert("Added to Cart!");
-    }; 
+
   return (
     <div>
       <Header/>

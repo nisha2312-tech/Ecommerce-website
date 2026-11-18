@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link,useLocation} from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -6,8 +6,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 // import { initHomeScripts } from "./main";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
-import { useContext } from "react";
 import { CartContext } from "./context/CartContext";
+import { WishlistContext } from "./context/WishlistContext";
 
 import "./style.css";
 import Header from "./components/Header";
@@ -28,39 +28,33 @@ const Products = () => {
       
 
     };
-  // const brandIcons = {
-  //     1: "fa-solid fa-shoe-prints",        // Nike
-  //     2: "fa-solid fa-shoe-prints", // Puma (no official FA icon, closest match)
-  //     3: "fa-solid fa-bars",        // Adidas (3 stripes vibe)
-  //     4: "fa-solid fa-shoe-prints", // Red Tape
-  //     5: "fa-solid fa-road",        // Roadster
-  //     6: "fa-solid fa-user-tie"     // Allen Solly (formal wear feel)
-
-  //   };
-
+  
   // Auth
-  const token = localStorage.getItem("token");
-  const username = localStorage.getItem("username");
-  const isLoggedIn = !!token;
-  // --------------------
-  // USER-SPECIFIC KEY
-  // --------------------
-  const wishlistKey = username ? `wishlist_${username}` : null;
-  // USER-SPECIFIC CART KEY
-  const cartKey = username ? `cart_${username}` : null;
+  // const token = localStorage.getItem("token");
+  // const username = localStorage.getItem("username");
+  // const isLoggedIn = !!token;
 
-  // States
-  // const { id } = useParams(); // 👈 get product id from URL
+  const token = localStorage.getItem("token");
+  const isLoggedIn = !!token;
+
+  const [username, setUsername] = useState(
+    localStorage.getItem("username")
+  );
+
+useEffect(() => {
+  setUsername(localStorage.getItem("username"));
+}, []);
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [wishlist, setWishlist] = useState([]);
-  // Cart state (for count)
-  // const [cart, setCart] = useState([]);
+  
+  const { wishlist,setWishlist } = useContext(WishlistContext);
   const { cart, setCart } = useContext(CartContext);
+  
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [brands, setBrands] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState(null);
@@ -103,26 +97,15 @@ useEffect(() => {
     .catch((err) => console.error("Error fetching brands:", err));
 }, []);
 
-  
 
-  // Init scripts and load wishlist once
-  useEffect(() => {
-    // initHomeScripts();
-    if(!wishlistKey){
-      setWishlist([]);
-    }
-    else{
-      setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
-    }
-      
-  }, [wishlistKey]);
 
   // Add/remove product from wishlist
   const toggleWishlist = (product) => {
-    if(!wishlistKey) {
-      alert("Please login to use wishlist");
-      return;
-    }
+    if(!username){
+    alert("Please Login First");
+    return;
+  }
+
     let newWishlist;
     if (wishlist.some((p) => p.id === product.id)) {
       // Remove if already in wishlist
@@ -132,7 +115,6 @@ useEffect(() => {
       newWishlist = [...wishlist, product];
     }
     setWishlist(newWishlist);
-    localStorage.setItem(wishlistKey, JSON.stringify(newWishlist));
   };
 
   // Check if product is in wishlist
@@ -140,35 +122,55 @@ useEffect(() => {
     return wishlist.some((p) => p.id === productId);
   };
     // Add to Cart function
-    const addToCart = (product) => {
-  if (!username) {
+ const addToCart = (product) => {
+
+  if(!username){
     alert("Please Login First");
     return;
   }
 
-  const existing = cart.find(item => item.id === product.id);
+
+  const existing = cart.find(
+    item => item.id === product.id
+  );
+
 
   let updatedCart;
 
-  if (existing) {
+
+  if(existing){
+
     updatedCart = cart.map(item =>
       item.id === product.id
-        ? { ...item, quantity: item.quantity + 1 }
-        : item
+      ?
+      {
+        ...item,
+        quantity:item.quantity + 1
+      }
+      :
+      item
     );
-  } else {
-    updatedCart = [
+
+  }
+  else{
+
+    updatedCart=[
       ...cart,
       {
         ...product,
-        quantity: 1,
-      },
+        quantity:1
+      }
     ];
+
   }
 
+
   setCart(updatedCart);
-  alert("Added to Cart!");
+
+   alert("Added to Cart!");
+
 };
+  
   
 
   // Fetch products
@@ -232,11 +234,7 @@ useEffect(() => {
 
   
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    window.location.href = "/login";
-  };
+
 
   
 

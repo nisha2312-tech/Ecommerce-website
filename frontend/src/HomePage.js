@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 // import { Link, useLocation } from "react-router-dom";
 import { Link,NavLink, useLocation,useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -10,6 +10,8 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
 import "slick-carousel/slick/slick.min.js";
+import { CartContext } from "./context/CartContext";
+import { WishlistContext } from "./context/WishlistContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -28,12 +30,6 @@ import Footer from "./components/Footer";
       localStorage.removeItem("username");
       window.location.href = "/login";
     };
-  // --------------------
-  // USER-SPECIFIC KEY
-  // --------------------
-  const wishlistKey = username ? `wishlist_${username}` : null;
-  // USER-SPECIFIC CART KEY
-  const cartKey = username ? `cart_${username}` : null;
     // states
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
@@ -43,13 +39,15 @@ import Footer from "./components/Footer";
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [loading, setLoading] = useState(true);
     const [sliders, setSliders] = useState([]);
-    // const [brands, setBrands] = useState([]);
     const [partners, setPartners] = useState([]);
-    const [wishlist, setWishlist] = useState([]);
-      // Cart state (for count)
-    const [cart, setCart] = useState([]);
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
+    
+    const { wishlist,setWishlist } = useContext(WishlistContext);
+    const { cart, setCart } = useContext(CartContext);
+    
+
+
     const categoryIcons = {
       1: "fa-solid fa-person-dress",
       2: "fa-solid fa-person",
@@ -79,27 +77,12 @@ import Footer from "./components/Footer";
 
 
 
-
-    // Init scripts and load wishlist once
-      useEffect(() => {
-        // initHomeScripts();
-        if(!wishlistKey){
-          setWishlist([]);
-        }
-        else{
-          setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
-        }
-          if (cartKey) {
-        setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
-        }
-      }, [wishlistKey, cartKey]);
-    
       // Add/remove product from wishlist
       const toggleWishlist = (product) => {
-        if(!wishlistKey) {
-          alert("Please login to use wishlist");
-          return;
-        }
+        // if(!wishlistKey) {
+        //   alert("Please login to use wishlist");
+        //   return;
+        // }
         let newWishlist;
         if (wishlist.some((p) => p.id === product.id)) {
           // Remove if already in wishlist
@@ -109,7 +92,7 @@ import Footer from "./components/Footer";
           newWishlist = [...wishlist, product];
         }
         setWishlist(newWishlist);
-        localStorage.setItem(wishlistKey, JSON.stringify(newWishlist));
+        // localStorage.setItem(wishlistKey, JSON.stringify(newWishlist));
       };
     
       // Check if product is in wishlist
@@ -118,10 +101,10 @@ import Footer from "./components/Footer";
       };
         // Add to Cart function
         const addToCart = (product) => {
-        if (!cartKey){
-          alert("please login first") 
-          return;
-        }
+        // if (!cartKey){
+        //   alert("please login first") 
+        //   return;
+        // }
         let newCart = [...cart];
         const existingIndex = newCart.findIndex((p) => p.id === product.id);
     
@@ -135,7 +118,7 @@ import Footer from "./components/Footer";
         }
     
         setCart(newCart);
-        localStorage.setItem(cartKey, JSON.stringify(newCart));
+
         alert("Added to Cart!");
       }; 
 

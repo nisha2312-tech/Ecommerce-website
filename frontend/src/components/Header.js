@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
+import { WishlistContext } from "../context/WishlistContext";
 function Header() {
       //login
     /* ===================== AUTH CHECK ===================== */
@@ -20,13 +21,9 @@ function Header() {
   // --------------------
   // USER-SPECIFIC KEY
   // --------------------
-  const wishlistKey = username ? `wishlist_${username}` : null;
-  // USER-SPECIFIC CART KEY
-  // const cartKey = username ? `cart_${username}` : null;
-  const [wishlist, setWishlist] = useState([]);
-  // Cart state (for count)
-  // const [cart, setCart] = useState([]);
-  // const { cart, setCart } = useContext(CartContext);
+ 
+  const { wishlist } = useContext(WishlistContext);
+
   const { cart } = useContext(CartContext);
 
 
@@ -51,44 +48,10 @@ function Header() {
         setPages(res.data);
       })
       .catch((err) => console.log(err));
+      
   }, []);
 
-    // Init scripts and load wishlist once
-    // useEffect(() => {
   
-    //   if(!wishlistKey){
-    //     setWishlist([]);
-    //   }
-    //   else{
-    //     setWishlist(JSON.parse(localStorage.getItem(wishlistKey)) || []);
-    //   }
-    //     if (cartKey) {
-    //   setCart(JSON.parse(localStorage.getItem(cartKey)) || []);
-    //   }
-    // }, [wishlistKey, cartKey]);
-
-    // Add to Cart function
-  //   const addToCart = (product) => {
-  //   if (!cartKey) {
-  //     alert("Please Login First");
-  //     return;
-  //   }
-  //   let newCart = [...cart];
-  //   const existingIndex = newCart.findIndex((p) => p.id === product.id);
-
-  //   if (existingIndex !== -1) {
-  //     newCart[existingIndex].quantity += 1;
-  //   } else {
-  //     newCart.push({
-  //       ...product,
-  //       quantity: 1,
-  //     });
-  //   }
-
-  //   setCart(newCart);
-  //   localStorage.setItem(cartKey, JSON.stringify(newCart));
-  //   alert("Added to Cart!");
-  // };
 
   
   return  (
@@ -208,7 +171,13 @@ function Header() {
                
                 <Link to="/Cart" className="btn cart">
                   <i className="fa fa-shopping-cart"></i>
-                  <span>({cart.reduce((sum, item) => sum + item.quantity, 0)})</span>
+                    
+                  {/* <span>({cart.reduce((sum, item) => sum + item.quantity, 0)})</span> */}
+                  <span>
+                  (
+                  {cart ? cart.reduce((sum,item)=>sum+item.quantity,0) : 0}
+                  )
+                  </span>
                 </Link>
               </div>
             </div>
